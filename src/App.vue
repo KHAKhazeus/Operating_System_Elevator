@@ -1,28 +1,61 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <b-container id="app" fluid class="text-center">
+        <b-row>
+            <b-col class="nes-container is-rounded">
+                <span class="nes-text is-primary" style="font-size:1vw;">Control Panel</span>
+                <b-row style="margin-top: 10px">
+                <ElevatorControl
+                    v-for="now in numberList"
+                    v-bind:now="now"
+                    v-bind:key="now">
+                </ElevatorControl>
+                </b-row>
+                <br />
+                <b-button variant="danger" onclick="reloadpage()">Reload</b-button>
+            </b-col>
+            <ElevatorPit
+                v-for="elevator in elevatorList"
+                v-bind:elevator="elevator"
+                v-bind:key="elevator.id">
+            </ElevatorPit>
+        </b-row>
+    </b-container>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import ElevatorPit from './components/ElevatorPit.vue'
+import ElevatorControl from './components/ElevatorControl.vue'
+let nextTodoId = 1
+var number= []
+for (var i=1;i < 21; i++){
+    number.push(i)
+}
 export default {
-  name: 'app',
-  components: {
-    HelloWorld
-  }
+    components: {
+        ElevatorPit,
+        ElevatorControl
+    },
+    data () {
+        return {
+        elevatorList: [
+                {
+                    id: nextTodoId++
+                },
+                {
+                    id: nextTodoId++
+                },
+                {
+                    id: nextTodoId++
+                },
+                {
+                    id: nextTodoId++
+                },
+                {
+                    id: nextTodoId++
+                },
+            ],
+        numberList: number
+        }
+    },
 }
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
