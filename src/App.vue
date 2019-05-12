@@ -12,6 +12,39 @@
                 </b-row>
                 <br />
                 <b-button variant="danger" onclick="reloadpage()">Reload</b-button>
+                <br/>
+                <b-row style="margin-top:10px;background:black;">
+                    <div class="col-sm-4 text-center no-gutter" style="color:white; font-size: 85% ;margin-left:20px">
+                        1
+                        <div id="outershownum1" style="font-family: 'digital-clock-font'">20</div>
+                        <i class="fas fa-arrow-circle-up" style="width: 100%; color: white; opacity: 0.3;" id="outershowup1"></i>
+                        <i class="fas fa-arrow-circle-down" style="width: 100%; color: white;opacity: 0.3;" id="outershowdown1"></i>
+                    </div>
+                    <div class="col-sm-4 text-center no-gutter" style="color:white; font-size: 85% ;margin-left:20px">
+                        2
+                        <div id="outershownum2" style="font-family: 'digital-clock-font'">20</div>
+                        <i class="fas fa-arrow-circle-up" style="width: 100%; color: white; opacity: 0.3;" id="outershowup2"></i>
+                        <i class="fas fa-arrow-circle-down" style="width: 100%; color: white;opacity: 0.3;" id="outershowdown2"></i>
+                    </div>
+                     <div class="col-sm-4 text-center no-gutter" style="color:white; font-size: 85% ;margin-left:20px">
+                        3
+                        <div id="outershownum3" style="font-family: 'digital-clock-font'">20</div>
+                        <i class="fas fa-arrow-circle-up" style="width: 100%; color: white; opacity: 0.3;" id="outershowup3"></i>
+                        <i class="fas fa-arrow-circle-down" style="width: 100%; color: white;opacity: 0.3;" id="outershowdown3"></i>
+                    </div>
+                     <div class="col-sm-4 text-center no-gutter" style="color:white; font-size: 85% ;margin-left:20px">
+                        4
+                        <div id="outershownum4" style="font-family: 'digital-clock-font'">20</div>
+                        <i class="fas fa-arrow-circle-up" style="width: 100%; color: white; opacity: 0.3;" id="outershowup4"></i>
+                        <i class="fas fa-arrow-circle-down" style="width: 100%; color: white;opacity: 0.3;" id="outershowdown4"></i>
+                    </div>
+                     <div class="col-sm-4 text-center no-gutter" style="color:white; font-size: 85% ;margin-left:20px">
+                        5
+                        <div id="outershownum5" style="font-family: 'digital-clock-font'">20</div>
+                        <i class="fas fa-arrow-circle-up" style="width: 100%; color: white; opacity: 0.3;" id="outershowup5"></i>
+                        <i class="fas fa-arrow-circle-down" style="width: 100%; color: white;opacity: 0.3;" id="outershowdown5"></i>
+                    </div>
+                </b-row>
             </b-col>
             <ElevatorPit
                 v-for="elevator in elevatorList"

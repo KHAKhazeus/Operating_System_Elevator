@@ -10,15 +10,21 @@
               </div>
             </div>
             <div class="col-sm-6 text-center no-gutter" style="margin-top:3vh"> 
-              <div style="height: 13%; background: black;">
-                <div class="row" style="height: 100%;">
+              <div style="background: black; width:100%">
+                <div class="row">
                   <div class="col-sm-4 text-center no-gutter" style="color: white;">
                       
                   </div>
                   <div class="col-sm-2 text-center no-gutterr" style="color: white; font-size:100%;" :id="'needsfittyelepic' + elevator.id">20</div>
                 </div>
+                <br/>
+                <i class="fas fa-arrow-circle-up" style="width: 100%; color: white; opacity: 0.3;" :id="'upicon' + elevator.id"></i>
+                <br/>
+                <i class="fas fa-arrow-circle-down" style="width: 100%; color: white;opacity: 0.3;" :id="'downicon' + elevator.id"></i>
               </div>
               <div style="backgroud: blue; margin-top:3vh">
+                <b-button variant="outline-primary" style="font-size: 60%; padding: 0.1em; margin: 0.1em;" :id="'ele' + elevator.id + 'OPEN'" >OPEN</b-button>
+                <b-button variant="outline-primary" style="font-size: 60%; padding: 0.1em; margin: 0.1em;" :id="'ele' + elevator.id + 'CLOSE'" >CLOSE</b-button>
                 <b-button variant="outline-warning" style="font-size: 60%; padding: 0.1em; margin: 0.1em;" :id="'ele' + elevator.id + 'alert'" >ALERT</b-button>
                 <br/>
                 <b-button variant="outline-dark" style="font-size: 60%; padding: 0.1em; margin: 0.1em;" :id="'ele' + elevator.id + '1'" >1</b-button>

@@ -52,6 +52,11 @@ class Lift{
     this.picid = 'elepic' + lift_id
     this.numid = 'needsfittyelepic' + lift_id
     this.doorid = 'elepiccover' + lift_id
+    this.upiconid = 'upicon' + lift_id
+    this.downiconid = 'downicon' + lift_id
+    this.outnumid = 'outershownum' + lift_id
+    this.outupiconid = 'outershowup' + lift_id
+    this.outdowniconid = 'outershowdown' + lift_id
     this.door = true
     this.floor = 1
     this.direction = DIRECTION.WAIT
@@ -61,7 +66,33 @@ class Lift{
     this.fetchtarget = null
     this.fetchdirection = null
     this.fetchrunningdirection = null
+    this.needReopen = false;
     this.status = true
+
+    this.activatedownicon = {
+      targets:[document.getElementById(this.downiconid), document.getElementById(this.outdowniconid)],
+      easing: 'linear',
+      opacity: 1,
+      duration: 1
+    }
+    this.deactivatedownicon = {
+      targets:[document.getElementById(this.downiconid), document.getElementById(this.outdowniconid)],
+      easing: 'linear',
+      opacity: 0.3,
+      duration: 1
+    }
+    this.activateupicon = {
+      targets:[document.getElementById(this.upiconid), document.getElementById(this.outupiconid)],
+      easing: 'linear',
+      opacity: 1,
+      duration: 1
+    }
+    this.deactivateupicon = {
+      targets:[document.getElementById(this.upiconid), document.getElementById(this.outupiconid)],
+      easing: 'linear',
+      opacity: 0.3,
+      duration: 1
+    }
 
     this.completeAniOnce = {
       complete: function(anim){
@@ -77,7 +108,7 @@ class Lift{
       duration: space_duration
     }
     this.upOneNumAni = {
-      targets: document.getElementById(this.numid),
+      targets: [document.getElementById(this.numid), document.getElementById(this.outnumid)],
       easing: 'linear',
       innerText: '+=1',
       round: 1,
@@ -99,7 +130,7 @@ class Lift{
     }
   
     this.downOneNumAni = {
-      targets: document.getElementById(this.numid),
+      targets: [document.getElementById(this.numid), document.getElementById(this.outnumid)],
       easing: 'linear',
       innerText: '-=1',
       round: 1,
@@ -139,6 +170,7 @@ class Lift{
       scale: 1,
       duration: space_duration
     }
+
   }
 }
 
@@ -186,6 +218,12 @@ function addCall(call){
     eleList[call.direction - 1].status = false
     //console.log("alert")
   }
+  else if(call.callType == 'open'){
+    eleList[call.direction - 1].needReopen = true;
+  }
+  else if(call.callType == 'close'){
+    eleList[call.direction - 1].needReopen = false;
+  }
 }
 
 var outerbuttonList = []
@@ -205,6 +243,16 @@ for(var i = 1; i < 21; i++){
   innerbuttonList.push('ele' + '3' + 'alert')
   innerbuttonList.push('ele' + '4' + 'alert')
   innerbuttonList.push('ele' + '5' + 'alert')
+  innerbuttonList.push('ele' + '1' + 'OPEN')
+  innerbuttonList.push('ele' + '1' + 'CLOSE')
+  innerbuttonList.push('ele' + '2' + 'OPEN')
+  innerbuttonList.push('ele' + '2' + 'CLOSE')
+  innerbuttonList.push('ele' + '3' + 'OPEN')
+  innerbuttonList.push('ele' + '3' + 'CLOSE')
+  innerbuttonList.push('ele' + '4' + 'OPEN')
+  innerbuttonList.push('ele' + '4' + 'CLOSE')
+  innerbuttonList.push('ele' + '5' + 'OPEN')
+  innerbuttonList.push('ele' + '5' + 'CLOSE')
 }
 window.outerbuttonList = outerbuttonList
 window.innerbuttonList = innerbuttonList
@@ -257,6 +305,12 @@ window.onload=function(){
                 if(floor == 'alert'){
                   but.setAttribute("onclick", "addCall(new Call('alert'," + floor + ", "+ elenumber + "))")
                 }
+                else if(floor == 'OPEN'){
+                  but.setAttribute("onclick", "addCall(new Call('open'," + "open" + ", "+ elenumber + "))")
+                }
+                else if(floor == "CLOSE"){
+                  but.setAttribute("onclick", "addCall(new Call('close'," + "close" + ", "+ elenumber + "))")
+                }
                 else{
                   but.setAttribute("onclick", "addCall(new Call('arrive'," + floor + ", "+ elenumber + "))")
                 }
@@ -306,17 +360,11 @@ var wholeDispatch = () => {
       var minIndex = 6
       var posDis = 21
       var posIndex = 6
-      // //console.log(direction)
-      // //console.log(floor)
       for(var eleindex in eleList){
         var ele = eleList[eleindex]
         if(!ele.status){
           continue
         }
-        // //console.log(ele.direction)
-        // //console.log(DIRECTION.WAIT)
-        // //console.log(ele.direction == DIRECTION.WAIT)
-        //console.log(ele.currentdestArray.indexOf(floor))
         if(ele.floor == floor || ele.currentdestArray.indexOf(floor) != -1){
           minDis = 0
           minIndex = eleindex
@@ -334,7 +382,7 @@ var wholeDispatch = () => {
         }
         else if(ele.direction == DIRECTION.WAIT && Math.abs(floor - ele.floor) < posDis){
           if(ele.fetchtarget == null){
-            posDis = 0
+            posDis = Math.abs(floor - ele.floor)
             posIndex = eleindex
             ele.fetchtarget = floor
             ele.fetchdirection = direction
@@ -346,7 +394,6 @@ var wholeDispatch = () => {
             }
           }
           else if(ele.fetchdirection == direction){
-            //console.log("wait bug")
             if(ele.fetchrunningdirection == DIRECTION.UP && floor - ele.floor > 0){
               if(floor - ele.fetchtarget){
                 ele.fetchtarget = floor
@@ -426,64 +473,16 @@ var individualDispatch = () => {
   }
 }
 
-// var startAni = () => {
-//   for( var eleIndex in eleList){
-//     var ele = eleList[eleIndex]
-//     var another_timeline = anime.timeline({
-//       easing: 'linear',
-//       // duration: space_duration,
-//     });
-//     //console.log("debug")
-    
-//     another_timeline.add(ele.completeAniOnce).finished.then(oneAni)
-//     // if(ele.currentdestArray.length){
-//     //   ele.currentdestArray = ele.currentdestArray.sort()
-//     //   var first = ele.currentdestArray[0]
-//     //   var last = ele.currentdestArray[ele.currentdestArray.length - 1]
-//     //   if(first == ele.floor){
-//     //     ele.timeline.add(ele.openDoorAni)
-//     //     ele.door = false
-//     //     for(var destIndex in ele.destPool){
-//     //       var destCall = ele.destPool[destIndex]
-//     //       if(destCall.floor == ele.floor){
-//     //         ele.destPool.splice(destIndex, 1)
-//     //       }
-//     //     }
-//     //     ele.currentdestArray.splice(0,1)
-//     //   }
-//     //   else if(first > ele.floor){
-//     //     ele.timeline.add(ele.closeDoorAni).add(ele.upOneNumAni).add(ele.upOnePicAni, "-=" + space_duration).add(ele.upOneDoorAni,"-=" + space_duration)
-//     //     ele.floor += 1
-//     //     ele.direction = DIRECTION.UP
-//     //     ele.door = true
-//     //   }
-//     //   else if(last < ele.floor){
-//     //     ele.timeline.add(ele.closeDoorAni).add(ele.downOneNumAni).add(ele.downOnePicAni, "-=" + space_duration).add(ele.downOneDoorAni,"-=" + space_duration)
-//     //     ele.floor -= 1
-//     //     ele.direction = DIRECTION.DOWN
-//     //     ele.door = true
-//     //   }
-//     // }
-//     // else{
-//     //   if(!ele.door){
-//     //     ele.timeline.add(ele.closeDoorAni)
-//     //     ele.door = true
-//     //   }
-    
-//     // }
-//   }
-//   // //console.log("one Ani")
-// }
-
 var oneAni = (eleIndex) => {
+
   var ele = eleList[eleIndex]
   // console.log(ele)
-  
   var new_timeline = anime.timeline({
     easing: 'linear',
     duration: space_duration,
   });
   if(ele.currentdestArray.length && ele.status){
+    ele.needReopen = false;
     console.log("inOnce")
     ele.currentdestArray = ele.currentdestArray.sort((a,b) => a-b)
     if(ele.currentdestArray.length){
@@ -514,6 +513,8 @@ var oneAni = (eleIndex) => {
           if(!ele.door){
             new_timeline.add(ele.closeDoorAni)
           }
+          document.getElementById(ele.downiconid).style.opacity = 1
+          document.getElementById(ele.outdowniconid).style.opacity = 1
           new_timeline.add(ele.downOneNumAni).add(ele.downOnePicAni, "-=" + space_duration).add(ele.downOneDoorAni,"-=" + space_duration)
           ele.floor -= 1
           ele.direction = DIRECTION.DOWN
@@ -524,6 +525,8 @@ var oneAni = (eleIndex) => {
           if(!ele.door){
             new_timeline.add(ele.closeDoorAni)
           }
+          document.getElementById(ele.downiconid).style.opacity = 1
+          document.getElementById(ele.outdowniconid).style.opacity = 1
           new_timeline.add(ele.downOneNumAni).add(ele.downOnePicAni, "-=" + space_duration).add(ele.downOneDoorAni,"-=" + space_duration)
           ele.floor -= 1
           ele.direction = DIRECTION.DOWN
@@ -534,6 +537,8 @@ var oneAni = (eleIndex) => {
           if(!ele.door){
             new_timeline.add(ele.closeDoorAni)
           }
+          document.getElementById(ele.upiconid).style.opacity = 1
+          document.getElementById(ele.outupiconid).style.opacity = 1
           new_timeline.add(ele.upOneNumAni).add(ele.upOnePicAni, "-=" + space_duration).add(ele.upOneDoorAni,"-=" + space_duration)
           ele.floor += 1
           ele.direction = DIRECTION.UP
@@ -547,6 +552,11 @@ var oneAni = (eleIndex) => {
         if(!ele.door){
           new_timeline.add(ele.closeDoorAni)
         }
+        // new_timeline.add(ele.deactivatedownicon).add(ele.deactivateupicon)
+        document.getElementById(ele.upiconid).style.opacity = 0.3
+        document.getElementById(ele.downiconid).style.opacity = 0.3
+        document.getElementById(ele.outdowniconid).style.opacity = 0.3
+        document.getElementById(ele.outupiconid).style.opacity = 0.3
         ele.direction = DIRECTION.WAIT
         ele.fetchtarget = null
       }
@@ -570,6 +580,8 @@ var oneAni = (eleIndex) => {
             if(!ele.door){
               new_timeline.add(ele.closeDoorAni)
             }
+            document.getElementById(ele.upiconid).style.opacity = 1
+            document.getElementById(ele.outupiconid).style.opacity = 1
             new_timeline.add(ele.upOneNumAni).add(ele.upOnePicAni, "-=" + space_duration).add(ele.upOneDoorAni,"-=" + space_duration)
             ele.floor += 1
             ele.door = true
@@ -584,6 +596,11 @@ var oneAni = (eleIndex) => {
         if(!ele.door){
           new_timeline.add(ele.closeDoorAni)
         }
+        // new_timeline.add(ele.deactivatedownicon).add(ele.deactivateupicon)
+        document.getElementById(ele.upiconid).style.opacity = 0.3
+        document.getElementById(ele.downiconid).style.opacity = 0.3
+        document.getElementById(ele.outdowniconid).style.opacity = 0.3
+        document.getElementById(ele.outupiconid).style.opacity = 0.3
         ele.direction = DIRECTION.WAIT
         ele.fetchtarget = null
       }
@@ -607,6 +624,8 @@ var oneAni = (eleIndex) => {
             if(!ele.door){
               new_timeline.add(ele.closeDoorAni)
             }
+            document.getElementById(ele.downiconid).style.opacity = 1
+            document.getElementById(ele.outdowniconid).style.opacity = 1
             new_timeline.add(ele.downOneNumAni).add(ele.downOnePicAni, "-=" + space_duration).add(ele.downOneDoorAni,"-=" + space_duration)
             ele.floor -= 1
             ele.door = true
@@ -616,45 +635,29 @@ var oneAni = (eleIndex) => {
         }
       }
     }
-
-
-    // if(first == ele.floor){
-    //   new_timeline.add(ele.openDoorAni)
-    //   ele.door = false
-    //   for(var destIndex in ele.destPool){
-    //     var destCall = ele.destPool[destIndex]
-    //     if(destCall.floor == ele.floor){
-    //       ele.destPool.splice(destIndex, 1)
-    //     }
-    //   }
-    //   ele.currentdestArray.splice(0,1)
-    // }
-    // else if(first > ele.floor){
-    //   new_timeline.add(ele.closeDoorAni).add(ele.upOneNumAni).add(ele.upOnePicAni, "-=" + space_duration).add(ele.upOneDoorAni,"-=" + space_duration)
-    //   ele.floor += 1
-    //   ele.direction = DIRECTION.UP
-    //   ele.door = true
-    // }
-    // else if(last < ele.floor){
-    //   new_timeline.add(ele.closeDoorAni).add(ele.downOneNumAni).add(ele.downOnePicAni, "-=" + space_duration).add(ele.downOneDoorAni,"-=" + space_duration)
-    //   ele.floor -= 1
-    //   ele.direction = DIRECTION.DOWN
-    //   ele.door = true
-    // }
   }
   else if(ele.status){
-    if(!ele.door){
+    console.log(ele.needReopen)
+    if(ele.needReopen){
+      new_timeline.add(ele.openDoorAni);
+      ele.door = false;
+    }
+    else if(!ele.door){
       new_timeline.add(ele.closeDoorAni)
       ele.door = true
     }
     ele.direction = DIRECTION.WAIT
+    // new_timeline.add(ele.deactivatedownicon).add(ele.deactivateupicon)
+    document.getElementById(ele.upiconid).style.opacity = 0.3
+    document.getElementById(ele.downiconid).style.opacity = 0.3
+    document.getElementById(ele.outdowniconid).style.opacity = 0.3
+    document.getElementById(ele.outupiconid).style.opacity = 0.3
     ele.fetchtarget = null
   }
   else{
     new_timeline.add(ele.alertingAni).add(ele.backalertingAni)
   }
   new_timeline.add(ele.completeAniOnce)
-  ////console.log("oneAni")
 }
 
 window.reloadpage = function(){
