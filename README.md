@@ -48,7 +48,7 @@ npm run build
 
 ### 直接浏览
 
-https://khakhazeus.github.io/Operating_System/
+https://khakhazeus.github.io/Operating_System_Elevator/
 
 
 

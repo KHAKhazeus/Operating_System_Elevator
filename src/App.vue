@@ -1,4 +1,6 @@
 <template>
+    <html>
+
     <b-container id="app" fluid class="text-center">
         <b-row>
             <b-col class="nes-container is-rounded">
@@ -53,6 +55,7 @@
             </ElevatorPit>
         </b-row>
     </b-container>
+    </html>
 </template>
 
 <script>
