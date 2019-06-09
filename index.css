@@ -1,0 +1,19 @@
+.progress-rotate {
+    transform: rotate(90deg);
+    transform-origin: 1% 100%;
+    width: 2300%;
+}
+
+.polymorph {
+    fill: #398f5a;
+  }
+
+.no-gutter > [class*='col-'] {
+    padding-right:0;
+    padding-left:0;
+}
+
+@font-face{
+    font-family:'digital-clock-font';
+    src: url('@/assets/digital-7.ttf');
+}
